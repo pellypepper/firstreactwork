@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 function Game() {
   const [question, setQuestion] = useState("");
@@ -41,12 +41,7 @@ function Game() {
     }
   };
 
-  useEffect(() => {
-    loadNewQuestion();
-    return () => clearInterval(intervalId); // Cleanup on component unmount
-  }, []);
-
-  const loadNewQuestion = () => {
+  const loadNewQuestion = useCallback(() => {
     const randomKey = Object.keys(Gameplan)[Math.floor(Math.random() * Object.keys(Gameplan).length)];
     const word = Gameplan[randomKey].question;
     let wordArray = word.split("");
@@ -61,8 +56,9 @@ function Game() {
     setAnswer(Gameplan[randomKey].answer);
     setInput("");
     startTimer(30);
-  };
-  const startTimer = (maxTime) => {
+  }, []);
+
+  const startTimer = useCallback((maxTime) => {
     clearInterval(intervalId);
     setTimer(maxTime);
     const id = setInterval(() => {
@@ -78,7 +74,12 @@ function Game() {
       });
     }, 1000);
     setIntervalId(id);
-  };
+  }, [intervalId, answer, loadNewQuestion]);
+
+  useEffect(() => {
+    loadNewQuestion();
+    return () => clearInterval(intervalId); // Cleanup on component unmount
+  }, [intervalId, loadNewQuestion]);
 
   const handleSubmit = () => {
     if (input.toUpperCase() === answer) {
