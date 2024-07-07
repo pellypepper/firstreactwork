@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 
 function Game() {
   const [question, setQuestion] = useState("");
@@ -8,7 +8,7 @@ function Game() {
   const [timer, setTimer] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
 
-  const Gameplan = {
+  const Gameplan = useMemo(() => ({
     "first": {
       "question": "RUSSIA",
       "answer": "RUSSIA",
@@ -39,24 +39,7 @@ function Game() {
       "answer": "FEATHER",
       "hint": "Hair like outer covering of birds"
     }
-  };
-
-  const loadNewQuestion = useCallback(() => {
-    const randomKey = Object.keys(Gameplan)[Math.floor(Math.random() * Object.keys(Gameplan).length)];
-    const word = Gameplan[randomKey].question;
-    let wordArray = word.split("");
-  
-    for (let i = wordArray.length - 1; i > 0; i--) {
-      let j = Math.floor(Math.random() * (i + 1));
-      [wordArray[i], wordArray[j]] = [wordArray[j], wordArray[i]];
-    }
-  
-    setQuestion(wordArray.join(""));
-    setHint(Gameplan[randomKey].hint);
-    setAnswer(Gameplan[randomKey].answer);
-    setInput("");
-    startTimer(30);
-  }, [Gameplan, startTimer]);
+  }), []);
 
   const startTimer = useCallback((maxTime) => {
     clearInterval(intervalId);
@@ -75,6 +58,23 @@ function Game() {
     }, 1000);
     setIntervalId(id);
   }, [intervalId, answer, loadNewQuestion]);
+
+  const loadNewQuestion = useCallback(() => {
+    const randomKey = Object.keys(Gameplan)[Math.floor(Math.random() * Object.keys(Gameplan).length)];
+    const word = Gameplan[randomKey].question;
+    let wordArray = word.split("");
+  
+    for (let i = wordArray.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [wordArray[i], wordArray[j]] = [wordArray[j], wordArray[i]];
+    }
+  
+    setQuestion(wordArray.join(""));
+    setHint(Gameplan[randomKey].hint);
+    setAnswer(Gameplan[randomKey].answer);
+    setInput("");
+    startTimer(30);
+  }, [Gameplan, startTimer]);
 
   useEffect(() => {
     loadNewQuestion();

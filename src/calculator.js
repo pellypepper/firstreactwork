@@ -72,7 +72,7 @@ function Calculator() {
       return stack.reduce((acc, num) => acc + num, 0);
     };
 
-    const tokens = expression.split(/([\+\-\*\/])/);
+    const tokens = expression.split(/([+\-*/])/);
     return compute(tokens);
   };
 
@@ -124,3 +124,4 @@ function Calculator() {
 }
 
 export default Calculator;
+n
