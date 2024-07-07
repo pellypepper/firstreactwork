@@ -40,11 +40,29 @@ function Game() {
       "hint": "Hair like outer covering of birds"
     }
   }), []);
+
+  // Define `loadNewQuestion` before it's used in `useEffect` and `startTimer`
+  const loadNewQuestion = useCallback(() => {
+    const randomKey = Object.keys(Gameplan)[Math.floor(Math.random() * Object.keys(Gameplan).length)];
+    const word = Gameplan[randomKey].question;
+    let wordArray = word.split("");
+  
+    for (let i = wordArray.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [wordArray[i], wordArray[j]] = [wordArray[j], wordArray[i]];
+    }
+  
+    setQuestion(wordArray.join(""));
+    setHint(Gameplan[randomKey].hint);
+    setAnswer(Gameplan[randomKey].answer);
+    setInput("");
+    startTimer(30);
+  }, [Gameplan, startTimer]);
+
   useEffect(() => {
     loadNewQuestion();
     return () => clearInterval(intervalId); // Cleanup on component unmount
   }, [intervalId, loadNewQuestion]);
-
 
   const startTimer = useCallback((maxTime) => {
     clearInterval(intervalId);
@@ -63,24 +81,6 @@ function Game() {
     }, 1000);
     setIntervalId(id);
   }, [intervalId, answer, loadNewQuestion]);
-
-  const loadNewQuestion = useCallback(() => {
-    const randomKey = Object.keys(Gameplan)[Math.floor(Math.random() * Object.keys(Gameplan).length)];
-    const word = Gameplan[randomKey].question;
-    let wordArray = word.split("");
-  
-    for (let i = wordArray.length - 1; i > 0; i--) {
-      let j = Math.floor(Math.random() * (i + 1));
-      [wordArray[i], wordArray[j]] = [wordArray[j], wordArray[i]];
-    }
-  
-    setQuestion(wordArray.join(""));
-    setHint(Gameplan[randomKey].hint);
-    setAnswer(Gameplan[randomKey].answer);
-    setInput("");
-    startTimer(30);
-  }, [Gameplan, startTimer]);
-
 
   const handleSubmit = () => {
     if (input.toUpperCase() === answer) {
