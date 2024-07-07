@@ -56,7 +56,7 @@ function Game() {
     setAnswer(Gameplan[randomKey].answer);
     setInput("");
     startTimer(30);
-  }, []);
+  }, [Gameplan, startTimer]);
 
   const startTimer = useCallback((maxTime) => {
     clearInterval(intervalId);

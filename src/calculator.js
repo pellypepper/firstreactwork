@@ -13,18 +13,67 @@ function Calculator() {
 
   const Equal = () => {
     try {
-      setInput(evaluateExpression(input).toString());
+      const result = evaluateExpression(input);
+      setInput(result.toString());
     } catch (error) {
       setInput('Error');
     }
   };
 
   const evaluateExpression = (expression) => {
-    // Remove any characters that are not digits, operators, or parentheses
     const sanitizedExpression = expression.replace(/[^-()\d/*+.]/g, '');
-    
-    // Use a Function constructor to create a new function that returns the result of the expression
-    return new Function(`return ${sanitizedExpression}`)();
+    return parseExpression(sanitizedExpression);
+  };
+
+  const parseExpression = (expression) => {
+    const operators = {
+      '+': (a, b) => a + b,
+      '-': (a, b) => a - b,
+      '*': (a, b) => a * b,
+      '/': (a, b) => a / b,
+    };
+
+    const compute = (tokens) => {
+      let stack = [];
+      let currentNumber = '';
+      let currentOperator = '+';
+
+      for (let i = 0; i <= tokens.length; i++) {
+        const char = tokens[i] || ' ';
+        if (!isNaN(char) && char !== ' ') {
+          currentNumber += char;
+        } else if (char in operators || char === ' ' || i === tokens.length) {
+          if (currentNumber !== '') {
+            const num = parseFloat(currentNumber);
+            switch (currentOperator) {
+              case '+':
+                stack.push(num);
+                break;
+              case '-':
+                stack.push(-num);
+                break;
+              case '*':
+                stack.push(stack.pop() * num);
+                break;
+              case '/':
+                stack.push(stack.pop() / num);
+                break;
+              default:
+                break;
+            }
+            currentNumber = '';
+          }
+          if (char !== ' ') {
+            currentOperator = char;
+          }
+        }
+      }
+
+      return stack.reduce((acc, num) => acc + num, 0);
+    };
+
+    const tokens = expression.split(/([\+\-\*\/])/);
+    return compute(tokens);
   };
 
   return (
