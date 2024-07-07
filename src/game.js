@@ -40,6 +40,11 @@ function Game() {
       "hint": "Hair like outer covering of birds"
     }
   }), []);
+  useEffect(() => {
+    loadNewQuestion();
+    return () => clearInterval(intervalId); // Cleanup on component unmount
+  }, [intervalId, loadNewQuestion]);
+
 
   const startTimer = useCallback((maxTime) => {
     clearInterval(intervalId);
@@ -76,10 +81,6 @@ function Game() {
     startTimer(30);
   }, [Gameplan, startTimer]);
 
-  useEffect(() => {
-    loadNewQuestion();
-    return () => clearInterval(intervalId); // Cleanup on component unmount
-  }, [intervalId, loadNewQuestion]);
 
   const handleSubmit = () => {
     if (input.toUpperCase() === answer) {

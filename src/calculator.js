@@ -14,9 +14,13 @@ function Calculator() {
   const Equal = () => {
     try {
       const result = evaluateExpression(input);
-      setInput(result.toString());
+      if (isNaN(result)) {
+        setInput('');
+      } else {
+        setInput(result.toString());
+      }
     } catch (error) {
-      setInput('Error');
+      setInput('');
     }
   };
 
@@ -30,7 +34,12 @@ function Calculator() {
       '+': (a, b) => a + b,
       '-': (a, b) => a - b,
       '*': (a, b) => a * b,
-      '/': (a, b) => a / b,
+      '/': (a, b) => {
+        if (b === 0) {
+          throw new Error('Division by zero');
+        }
+        return a / b;
+      },
     };
 
     const compute = (tokens) => {
@@ -87,7 +96,6 @@ function Calculator() {
         />
         <div className="btn-wrapper1 btn-wrapper">
           <button onClick={Erase}>C</button>
-          <button onClick={() => Clickbtn("+/-")}>+/-</button>
           <button onClick={() => Clickbtn("%")}>%</button>
           <button onClick={() => Clickbtn("/")}>/</button>
         </div>
@@ -124,4 +132,3 @@ function Calculator() {
 }
 
 export default Calculator;
-n

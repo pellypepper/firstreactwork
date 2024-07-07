@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/static/css/main.03e06f37.css",
+    "main.js": "/static/js/main.e71ddaaa.js",
+    "static/media/addidas4.jpeg": "/static/media/addidas4.8078a0b2392404f88364.jpeg",
+    "index.html": "/index.html",
+    "main.03e06f37.css.map": "/static/css/main.03e06f37.css.map",
+    "main.e71ddaaa.js.map": "/static/js/main.e71ddaaa.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.03e06f37.css",
+    "static/js/main.e71ddaaa.js"
+  ]
+}
