@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 
 function Game() {
   const [question, setQuestion] = useState("");
@@ -6,42 +6,61 @@ function Game() {
   const [answer, setAnswer] = useState("");
   const [input, setInput] = useState("");
   const [timer, setTimer] = useState(0);
-  const [intervalId, setIntervalId] = useState(null);
+  const intervalId = useRef(null);
+
+  const Gameplan = useMemo(() => ({
+    "first": {
+      "question": "RUSSIA",
+      "answer": "RUSSIA",
+      "hint": "A Country in Europe"
+    },
+    "second": {
+      "question": "RONALDO",
+      "answer": "RONALDO",
+      "hint": "A famous football player"
+    },
+    "third": {
+      "question": "CUTLASS",
+      "answer": "CUTLASS",
+      "hint": "A Sharp object used for cutting things"
+    },
+    "fourth": {
+      "question": "UNIVERSITY",
+      "answer": "UNIVERSITY",
+      "hint": "A Tertiary Institution where people study degree"
+    },
+    "fifth": {
+      "question": "STATEMENT",
+      "answer": "STATEMENT",
+      "hint": "A declaration of something"
+    },
+    "sixth": {
+      "question": "FEATHER",
+      "answer": "FEATHER",
+      "hint": "Hair like outer covering of birds"
+    }
+  }), []);
+
+  const startTimer = useCallback((maxTime) => {
+    if (intervalId.current) {
+      clearInterval(intervalId.current);
+    }
+    setTimer(maxTime);
+    const id = setInterval(() => {
+      setTimer((prevTime) => {
+        if (prevTime > 1) {
+          return prevTime - 1;
+        } else {
+          clearInterval(id);
+          alert(`Time off! The correct answer was: ${answer}`);
+          return 0;
+        }
+      });
+    }, 1000);
+    intervalId.current = id;
+  }, [answer]);
 
   const loadNewQuestion = useCallback(() => {
-    const Gameplan = {
-      "first": {
-        "question": "RUSSIA",
-        "answer": "RUSSIA",
-        "hint": "A Country in Europe"
-      },
-      "second": {
-        "question": "RONALDO",
-        "answer": "RONALDO",
-        "hint": "A famous football player"
-      },
-      "third": {
-        "question": "CUTLASS",
-        "answer": "CUTLASS",
-        "hint": "A Sharp object used for cutting things"
-      },
-      "fourth": {
-        "question": "UNIVERSITY",
-        "answer": "UNIVERSITY",
-        "hint": "A Tertiary Institution where people study degree"
-      },
-      "fifth": {
-        "question": "STATEMENT",
-        "answer": "STATEMENT",
-        "hint": "A declaration of something"
-      },
-      "sixth": {
-        "question": "FEATHER",
-        "answer": "FEATHER",
-        "hint": "Hair like outer covering of birds"
-      }
-    };
-
     const randomKey = Object.keys(Gameplan)[Math.floor(Math.random() * Object.keys(Gameplan).length)];
     const word = Gameplan[randomKey].question;
     let wordArray = word.split("");
@@ -56,34 +75,21 @@ function Game() {
     setAnswer(Gameplan[randomKey].answer);
     setInput("");
     startTimer(30);
-  }, [startTimer]);
-
-  const startTimer = useCallback((maxTime) => {
-    clearInterval(intervalId);
-    setTimer(maxTime);
-    const id = setInterval(() => {
-      setTimer(prevTime => {
-        if (prevTime > 1) {
-          return prevTime - 1;
-        } else {
-          clearInterval(id);
-          alert(`Time off! The correct answer was: ${answer}`);
-          loadNewQuestion();
-          return 0;
-        }
-      });
-    }, 1000);
-    setIntervalId(id);
-  }, [intervalId, answer, loadNewQuestion]);
+  }, [Gameplan, startTimer]);
 
   useEffect(() => {
     loadNewQuestion();
-    return () => clearInterval(intervalId); // Cleanup on component unmount
-  }, [intervalId, loadNewQuestion]);
+    return () => {
+      if (intervalId.current) {
+        clearInterval(intervalId.current);
+      }
+    }; // Cleanup on component unmount
+  }, [loadNewQuestion]);
 
   const handleSubmit = () => {
     if (input.toUpperCase() === answer) {
       window.confirm("Your Answer is correct");
+      loadNewQuestion();
     } else {
       window.alert("Your Answer is incorrect");
     }

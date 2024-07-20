@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/static/css/main.03e06f37.css",
-    "main.js": "/static/js/main.5c0bed15.js",
+    "main.js": "/static/js/main.c3579eb4.js",
     "static/media/addidas4.jpeg": "/static/media/addidas4.8078a0b2392404f88364.jpeg",
     "index.html": "/index.html",
     "main.03e06f37.css.map": "/static/css/main.03e06f37.css.map",
-    "main.5c0bed15.js.map": "/static/js/main.5c0bed15.js.map"
+    "main.c3579eb4.js.map": "/static/js/main.c3579eb4.js.map"
   },
   "entrypoints": [
     "static/css/main.03e06f37.css",
-    "static/js/main.5c0bed15.js"
+    "static/js/main.c3579eb4.js"
   ]
 }
